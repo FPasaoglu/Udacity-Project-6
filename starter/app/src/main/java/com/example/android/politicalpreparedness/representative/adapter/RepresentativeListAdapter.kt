@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.politicalpreparedness.R
-import com.example.android.politicalpreparedness.databinding.ViewholderRepresentativeBinding
+import com.example.android.politicalpreparedness.databinding.RepresentativeItemListBinding
 import com.example.android.politicalpreparedness.network.models.Channel
 import com.example.android.politicalpreparedness.representative.model.Representative
 
@@ -27,7 +27,7 @@ class RepresentativeListAdapter: ListAdapter<Representative, RepresentativeViewH
     }
 }
 
-class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding): RecyclerView.ViewHolder(binding.root) {
+class RepresentativeViewHolder(val binding: RepresentativeItemListBinding): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Representative) {
         binding.representative = item
@@ -37,6 +37,14 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding): Re
         //TODO: Show www link ** Hint: Use provided helper methods
 
         binding.executePendingBindings()
+    }
+
+    companion object {
+        fun from(parent: ViewGroup): RepresentativeViewHolder {
+            val inflater = LayoutInflater.from(parent.context)
+            val binding = RepresentativeItemListBinding.inflate(inflater, parent, false)
+            return RepresentativeViewHolder(binding)
+        }
     }
 
     //TODO: Add companion object to inflate ViewHolder (from)
@@ -74,6 +82,17 @@ class RepresentativeViewHolder(val binding: ViewholderRepresentativeBinding): Re
         val uri = Uri.parse(url)
         val intent = Intent(ACTION_VIEW, uri)
         itemView.context.startActivity(intent)
+    }
+
+}
+
+class RepresentativeDiffCallback : DiffUtil.ItemCallback<Representative>(){
+    override fun areItemsTheSame(oldItem: Representative, newItem: Representative): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: Representative, newItem: Representative): Boolean {
+        return oldItem.official == newItem.official
     }
 
 }

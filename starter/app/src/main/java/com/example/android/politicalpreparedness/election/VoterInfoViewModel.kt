@@ -5,6 +5,7 @@ import com.example.android.politicalpreparedness.database.ElectionDao
 
 class VoterInfoViewModel(private val dataSource: ElectionDao) : ViewModel() {
 
+
     //TODO: Add live data to hold voter info
 
     //TODO: Add var and methods to populate voter info

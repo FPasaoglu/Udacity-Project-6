@@ -2,6 +2,9 @@
 <resources>
     <dimen name="default_padding">8dp</dimen>
 
-    <!-- TODO: Add necessary dimension values -->s
+    <dimen name="margin_xsmall">4dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
 
 </resources>

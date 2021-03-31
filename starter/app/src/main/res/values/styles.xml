@@ -9,6 +9,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- TODO: Add necessary styles -->
+    <style name="textTitle" parent="Base.Widget.AppCompat.TextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 
 </resources>
