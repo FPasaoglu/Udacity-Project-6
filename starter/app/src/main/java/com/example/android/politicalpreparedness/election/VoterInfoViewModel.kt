@@ -1,22 +1,76 @@
 package com.example.android.politicalpreparedness.election
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.android.politicalpreparedness.database.ElectionDao
+import androidx.lifecycle.viewModelScope
+import com.example.android.politicalpreparedness.ResponseState
+import com.example.android.politicalpreparedness.network.models.AdministrationBody
+import com.example.android.politicalpreparedness.network.models.Division
+import com.example.android.politicalpreparedness.network.models.Election
+import com.example.android.politicalpreparedness.repository.ElectionRepository
+import kotlinx.coroutines.launch
 
-class VoterInfoViewModel(private val dataSource: ElectionDao) : ViewModel() {
+class VoterInfoViewModel(private val repository: ElectionRepository) : ViewModel() {
 
 
-    //TODO: Add live data to hold voter info
+    val voterAdministrationBody = MutableLiveData<AdministrationBody>()
+    val showToastMessage = MutableLiveData<String>()
 
-    //TODO: Add var and methods to populate voter info
+    val electionInfoUrl = MutableLiveData<String>()
+    val ballotInfoUrl = MutableLiveData<String>()
+    val votingLocationFinderUrl = MutableLiveData<String>()
 
-    //TODO: Add var and methods to support loading URLs
+    val election = MutableLiveData<Election>()
+    val savedElection = MutableLiveData<Election>()
 
-    //TODO: Add var and methods to save and remove elections to local database
-    //TODO: cont'd -- Populate initial state of save button to reflect proper action based on election saved status
+    fun getVoterInfo(division: Division, electionId: Int) {
+        val address = "${division.state} ${division.country}"
+        viewModelScope.launch {
+            val voterResponse = repository.getVoterInfo(address, electionId)
+            when (voterResponse) {
+                is ResponseState.Success -> {
+                    election.value = voterResponse.data.election
+                    voterAdministrationBody.value = voterResponse.data.state?.get(0)?.electionAdministrationBody
+                }
+                is ResponseState.Error -> {
+                    showToastMessage.value = voterResponse.message
+                }
+            }
+        }
+    }
 
-    /**
-     * Hint: The saved state can be accomplished in multiple ways. It is directly related to how elections are saved/removed from the database.
-     */
+    fun getElectionFromRepo(electionId: Int) {
+        viewModelScope.launch {
+            savedElection.value = repository.getElectionById(electionId)
+        }
+    }
 
+
+    fun setElectionInfoUrl() {
+        electionInfoUrl.value = voterAdministrationBody.value?.electionInfoUrl
+    }
+
+    fun setBallotInfoUrl() {
+        ballotInfoUrl.value = voterAdministrationBody.value?.ballotInfoUrl
+    }
+
+    fun setVotingLocationFinderUrl() {
+        votingLocationFinderUrl.value = voterAdministrationBody.value?.votingLocationFinderUrl
+    }
+
+    fun followButton() {
+        viewModelScope.launch {
+            if (savedElection.value == null) {
+                election.value?.let { electionValue ->
+                    repository.saveElection(electionValue)
+                    savedElection.value = electionValue
+                }
+            } else {
+                election.value?.let { electionValue ->
+                    savedElection.value = null
+                    repository.deleteElection(electionValue)
+                }
+            }
+        }
+    }
 }

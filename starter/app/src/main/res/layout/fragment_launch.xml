@@ -44,9 +44,6 @@
             app:layout_constraintStart_toStartOf="parent" />
 
 
-        <!-- TODO: Add Button to navigate to upcoming elections. -->
-
-        <!-- TODO: Add Button to navigate to representatives. -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
